@@ -19,8 +19,8 @@ if ( !class_exists( 'ROC_Plugin') ) {
             add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts' ) );
 
             // ajax actions
-            add_action( 'wp_ajax_rhcb_reaction_save_action', array( $this, 'ajax' ) );
-            add_action( 'wp_ajax_nopriv_rhcb_reaction_save_action', array( $this, 'ajax' ) );
+            add_action( 'wp_ajax_roc_reaction', array( $this, 'ajax' ) );
+            add_action( 'wp_ajax_nopriv_roc_reaction', array( $this, 'ajax' ) );
         }
         
         
@@ -47,6 +47,16 @@ if ( !class_exists( 'ROC_Plugin') ) {
         public function add_scripts() {
             wp_enqueue_style( 'roc-style-css', plugin_dir_url( __FILE__ ) . 'assets/css/style.css', array(), ROC_VERSION );
             wp_enqueue_script( 'roc-script-js', plugin_dir_url( __FILE__ ) . 'assets/js/script.js', array( 'jquery' ), ROC_VERSION );
+        }
+        
+        
+        /*
+        * Ajax action
+        *
+        * @since 0.0.1
+        */
+        public function ajax() {
+        
         }
         
     }
