@@ -1,0 +1,171 @@
+.roc-reactions {
+  margin: 10px 0;
+  border:solid #eee;
+  border-width: 1px 0;
+  padding: 5px 0;
+}
+
+.roc-reactions:before,
+.roc-reactions:after {
+  content: "";
+  display: table;
+}
+
+.roc-reactions:after {
+  clear: both;
+}
+
+.roc-reactions {
+  *zoom: 1;
+}
+
+.roc-reactions-button {
+  position: relative;
+  cursor: pointer;
+  float: left;
+}
+
+.roc-reactions-main-button {
+  font-weight: bold;
+  font-size: 30px;
+  display: block;
+  line-height: 30px;
+}
+
+.roc-reactions-main-button:before {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 4px 4px 6px 0;
+  float: left;
+}
+
+.roc-reactions-box {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 40px;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.1);
+  box-sizing: border-box;
+  width: 300px;
+  height: 60px;
+  display: none;
+  z-index: -1;
+}
+
+.roc-reactions-button.show .roc-reactions-box {
+  display: block;
+  z-index: 1;
+}
+
+.roc-reactions-box .roc-reaction {
+  display: block;
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  left: 12px;
+  top: 15px;
+  opacity: 0;
+  transform: scale(1, 1);
+  transition: opacity .5s ease-in-out 0.5s, transform .07s ease-in-out 0s, top .07s ease-in-out 0s;
+  font-size: 26px;
+}
+
+.roc-reactions-button.show .roc-reaction {
+  opacity: 1;
+  animation-name: reaction;
+  animation-duration: .5s;
+}
+
+.roc-reactions-box .roc-reaction-number-1 {
+  left: 10px;
+  transition-delay: 0s;
+}
+
+.roc-reactions-box .roc-reaction-number-2 {
+  left: 50px;
+  transition-delay: .05s;
+}
+
+.roc-reactions-box .roc-reaction-number-3 {
+  left: 90px;
+  transition-delay: .1s;
+}
+
+.roc-reactions-box .roc-reaction-number-4 {
+  left: 130px;
+  transition-delay: .15s;
+}
+
+.roc-reactions-box .roc-reaction-number-5 {
+  left: 170px;
+  transition-delay: .2s;
+}
+
+.roc-reactions-box .roc-reaction-number-6 {
+  left: 210px;
+  transition-delay: .25s;
+}
+
+.roc-reactions-box .roc-reaction-number-7 {
+  left: 250px;
+  transition-delay: .30s;
+}
+
+.roc-reactions-button.show .roc-reaction {
+  animation-delay: 0s;
+}
+
+.roc-reactions-button.show .roc-reaction-number-1 {
+  animation-delay: .05s;
+}
+
+.roc-reactions-button.show .roc-reaction-number-2 {
+  animation-delay: .1s;
+}
+
+.roc-reactions-button.show .roc-reaction-number-3 {
+  animation-delay: .15s;
+}
+
+.roc-reactions-button.show .roc-reaction-number-4 {
+  animation-delay: .2s;
+}
+
+.roc-reactions-button.show .roc-reaction-number-5 {
+  animation-delay: .25s;
+}
+
+.roc-reactions-button.show .roc-reaction-number-6 {
+  animation-delay: .30s;
+}
+
+.roc-reactions-button.show .roc-reaction-number-7 {
+  animation-delay: .35s;
+}
+
+.roc-reaction:hover {
+  transform: scale(1.3, 1.3);
+}
+
+
+@keyframes reaction {
+  0% {
+    width: 38px;
+    height: 38px;
+    top: 40px;
+  }
+  35% {
+    width: 48px;
+    height: 48px;
+    top: 5px;
+  }
+  100% {
+    width: 38px;
+    height: 38px;
+    top: 8px;
+  }
+}

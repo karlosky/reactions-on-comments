@@ -12,8 +12,6 @@ define( 'ROC_VERSION', '0.0.1' );
 if ( !class_exists( 'ROC_Plugin') ) {
 
     class ROC_Plugin {
-    
-        public $reactions;
         
         public function __construct() {
         
@@ -48,10 +46,11 @@ if ( !class_exists( 'ROC_Plugin') ) {
             //@todo: add icons urls
             $default_reactions = array(
                 'Like' => ':smile:',
-                'Love' => ':grin:',
-                'Smile' => ':cool:',
+                'Cool' => ':grin:',
+                'Lol' => ':lol:',
                 'WOW' => ':shock:',
                 'Sad' => ':sad:',
+                'Cry' => ':cry:',
                 'Angry' => ':evil:',
             );
             update_option( 'roc_reactions', $default_reactions );
@@ -68,6 +67,16 @@ if ( !class_exists( 'ROC_Plugin') ) {
         
             wp_enqueue_style( 'roc-style-css', plugin_dir_url( __FILE__ ) . 'assets/css/style.css', array(), ROC_VERSION );
             wp_enqueue_script( 'roc-script-js', plugin_dir_url( __FILE__ ) . 'assets/js/script.js', array( 'jquery' ), ROC_VERSION );
+            $localize = array(
+			'ajax' => admin_url( 'admin-ajax.php' ),
+		);
+            wp_localize_script( 
+                'roc-admin-ajax', 
+                'roc_reaction', 
+                array(
+                    'ajax' => admin_url( 'admin-ajax.php' ),
+                )
+            );
             
         }
         
@@ -99,13 +108,12 @@ if ( !class_exists( 'ROC_Plugin') ) {
                         <?php if ( is_user_logged_in() || !is_user_logged_in() && $this->is_enabled_for_anonymous() ) : ?>
                             <div class="roc-reactions-button">
                                 <span class="roc-reactions-main-button">
-                                    Vote
+                                    <?php echo wp_encode_emoji( $reactions['Like'] ); ?>
                                 </span>
                                 <div class="roc-reactions-box">
-                                    <?php foreach ( $reactions as $reaction => $image ) : ?>
-                                        <span class="roc-reaction roc-reaction-<?php echo sanitize_title( $reaction ); ?>">
-                                            <strong><?php echo wp_encode_emoji( $image ); ?></strong>
-                                        </span>
+                                    <?php $i = 0; ?>
+                                    <?php foreach ( $reactions as $reaction => $image ) : $i++; ?>
+                                        <span class="roc-reaction roc-reaction-<?php echo sanitize_title( $reaction ); ?> roc-reaction-number-<?php echo $i; ?>"><?php echo wp_encode_emoji( $image ); ?></span>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
