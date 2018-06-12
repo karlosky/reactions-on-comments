@@ -47,12 +47,12 @@ if ( !class_exists( 'ROC_Plugin') ) {
             //default reactions
             //@todo: add icons urls
             $default_reactions = array(
-                'Like' => '',
-                'Love' => '',
-                'Smile' => '',
-                'WOW' => '',
-                'Sad' => '',
-                'Angry' => '',
+                'Like' => ':smile:',
+                'Love' => ':grin:',
+                'Smile' => ':cool:',
+                'WOW' => ':shock:',
+                'Sad' => ':sad:',
+                'Angry' => ':evil:',
             );
             update_option( 'roc_reactions', $default_reactions );
             
@@ -104,7 +104,7 @@ if ( !class_exists( 'ROC_Plugin') ) {
                                 <div class="roc-reactions-box">
                                     <?php foreach ( $reactions as $reaction => $image ) : ?>
                                         <span class="roc-reaction roc-reaction-<?php echo sanitize_title( $reaction ); ?>">
-                                            <strong><?php echo esc_attr( $reaction ); ?></strong>
+                                            <strong><?php echo wp_encode_emoji( $image ); ?></strong>
                                         </span>
                                     <?php endforeach; ?>
                                 </div>
