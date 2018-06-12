@@ -68,8 +68,8 @@ if ( !class_exists( 'ROC_Plugin') ) {
             wp_enqueue_style( 'roc-style-css', plugin_dir_url( __FILE__ ) . 'assets/css/style.css', array(), ROC_VERSION );
             wp_enqueue_script( 'roc-script-js', plugin_dir_url( __FILE__ ) . 'assets/js/script.js', array( 'jquery' ), ROC_VERSION );
             $localize = array(
-			'ajax' => admin_url( 'admin-ajax.php' ),
-		);
+            'ajax' => admin_url( 'admin-ajax.php' ),
+        );
             wp_localize_script( 
                 'roc-admin-ajax', 
                 'roc_reaction', 
