@@ -12,15 +12,20 @@ define( 'ROC_VERSION', '0.0.1' );
 if ( !class_exists( 'ROC_Plugin') ) {
 
     class ROC_Plugin {
+    
+        public $reactions;
         
         public function __construct() {
+        
             //hooks
             register_activation_hook( __FILE__, array( $this, 'set_defaults' ) );
             add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts' ) );
+            add_filter( 'comment_text', array( $this, 'buttons' ), 10 );
 
             // ajax actions
             add_action( 'wp_ajax_roc_reaction', array( $this, 'ajax' ) );
             add_action( 'wp_ajax_nopriv_roc_reaction', array( $this, 'ajax' ) );
+            
         }
         
         
@@ -30,12 +35,27 @@ if ( !class_exists( 'ROC_Plugin') ) {
         * @since 0.0.1 
         */        
         public function set_defaults() {
-            $data = array(
+            
+            //default settings
+            $default_data = array(
                 'enabled' => true,
                 'count_enabled' => true,
                 'enabled_for_anonyms' => true,
             );
-            update_options( 'roc_settings', $data );
+            update_option( 'roc_settings', $default_data );
+            
+            //default reactions
+            //@todo: add icons urls
+            $default_reactions = array(
+                'Like' => '',
+                'Love' => '',
+                'Smile' => '',
+                'WOW' => '',
+                'Sad' => '',
+                'Angry' => '',
+            );
+            update_option( 'roc_reactions', $default_reactions );
+            
         }
         
         
@@ -45,8 +65,10 @@ if ( !class_exists( 'ROC_Plugin') ) {
         * @since 0.0.1
         */
         public function add_scripts() {
+        
             wp_enqueue_style( 'roc-style-css', plugin_dir_url( __FILE__ ) . 'assets/css/style.css', array(), ROC_VERSION );
             wp_enqueue_script( 'roc-script-js', plugin_dir_url( __FILE__ ) . 'assets/js/script.js', array( 'jquery' ), ROC_VERSION );
+            
         }
         
         
@@ -56,6 +78,86 @@ if ( !class_exists( 'ROC_Plugin') ) {
         * @since 0.0.1
         */
         public function ajax() {
+        
+        }
+        
+        
+        public function buttons( $comment_text ) {
+            $voted = 0;
+            $reactions = $this->get_reactions();
+            $type = $voted ? 'unvote' : 'vote';
+            ob_start();
+            ?>
+                <div class="roc-reactions roc-reactions-post-<?php the_ID(); ?>-comment-<?php comment_ID(); ?>" data-type="<?php echo esc_attr( $type ); ?>" data-nonce="<?php wp_create_nonce( '_roc_reaction_action' ); ?>" data-post="<?php the_ID(); ?>" data-comment="<?php comment_ID(); ?>">
+                    <div class="roc-reactions-button">
+                        <span class="roc-reactions-main-button">
+                            Vote
+                        </span>
+                        <div class="roc-reactions-box">
+                            <?php foreach ( $reactions as $reaction => $image ) : ?>
+                                <span class="roc-reaction roc-reaction-<?php echo sanitize_title( $reaction ); ?>">
+                                    <strong><?php echo esc_attr( $reaction ); ?></strong>
+                                </span>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php
+            $buttons = ob_get_contents();
+            ob_get_clean();
+            return $comment_text . $buttons;
+        }
+        
+        
+        /*
+        * Return all the reactions types
+        *
+        * @since 0.0.1
+        */
+        public function get_reactions() {
+            
+            $reactions = get_option( 'roc_reactions', array() );
+            
+            return $reactions;
+        }
+        
+        /*
+        * Check if reactions feature is enabled
+        *
+        * @since 0.0.1
+        */
+        public function is_enabled() {
+            
+            $settings = get_option( 'roc_settings', array() );
+            
+            return isset( $settings['count_enabled'] ) && $settings['count_enabled'] ? true : false;
+        }
+        
+        
+        /*
+        * Check if counter is enabled
+        *
+        * @since 0.0.1
+        */
+        public function is_counter_enabled() {
+        
+            $settings = get_option( 'roc_settings', array() );
+            
+            return isset( $settings['count_enabled'] ) && $settings['count_enabled'] ? true : false;
+        
+        }
+        
+        
+        /*
+        * Check if reactions feature is enabled fot the anonymous
+        *
+        * @since 0.0.1
+        */
+        public function is_enabled_for_anonymous() {
+        
+            $settings = get_option( 'roc_settings', array() );
+            
+            return isset( $settings['enabled_for_anonyms'] ) && $settings['enabled_for_anonyms'] ? true : false;
         
         }
         
