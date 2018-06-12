@@ -82,6 +82,12 @@ if ( !class_exists( 'ROC_Plugin') ) {
         }
         
         
+        /*
+        * Print section with the buttons
+        * This is displayed on the bottom of each comment
+        *
+        * @since 0.0.1
+        */
         public function buttons( $comment_text ) {
             $voted = 0;
             $reactions = $this->get_reactions();
@@ -89,23 +95,48 @@ if ( !class_exists( 'ROC_Plugin') ) {
             ob_start();
             ?>
                 <div class="roc-reactions roc-reactions-post-<?php the_ID(); ?>-comment-<?php comment_ID(); ?>" data-type="<?php echo esc_attr( $type ); ?>" data-nonce="<?php wp_create_nonce( '_roc_reaction_action' ); ?>" data-post="<?php the_ID(); ?>" data-comment="<?php comment_ID(); ?>">
-                    <div class="roc-reactions-button">
-                        <span class="roc-reactions-main-button">
-                            Vote
-                        </span>
-                        <div class="roc-reactions-box">
-                            <?php foreach ( $reactions as $reaction => $image ) : ?>
-                                <span class="roc-reaction roc-reaction-<?php echo sanitize_title( $reaction ); ?>">
-                                    <strong><?php echo esc_attr( $reaction ); ?></strong>
+                    <?php if ( $this->is_enabled() ) : ?>
+                        <?php if ( is_user_logged_in() || !is_user_logged_in() && $this->is_enabled_for_anonymous() ) : ?>
+                            <div class="roc-reactions-button">
+                                <span class="roc-reactions-main-button">
+                                    Vote
                                 </span>
-                            <?php endforeach; ?>
+                                <div class="roc-reactions-box">
+                                    <?php foreach ( $reactions as $reaction => $image ) : ?>
+                                        <span class="roc-reaction roc-reaction-<?php echo sanitize_title( $reaction ); ?>">
+                                            <strong><?php echo esc_attr( $reaction ); ?></strong>
+                                        </span>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <?php if ( $this->is_counter_enabled() ) : ?>
+                        <div class="roc-reactions-counter">
+                            <?php echo $this->counter(); ?>
                         </div>
-                    </div>
+                    <?php endif; ?>
                 </div>
             <?php
             $buttons = ob_get_contents();
             ob_get_clean();
             return $comment_text . $buttons;
+        }
+        
+        
+        /*
+        * Print the counter
+        * It's diplayed next to the buttons
+        *
+        * @since 0.0.1
+        */
+        public function counter() {
+        
+            // @todo: counter
+            $reactions = $this->get_reactions();
+            
+            return 'Counter';
+            
         }
         
         
