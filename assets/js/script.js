@@ -1,17 +1,14 @@
 (function($){
 
-	$(document).on( 'mouseenter', 'div.roc-reactions-button', function(e){
+    /*
+    * Hide and show buttons
+    */
+	$(document).on('mouseenter', 'div.roc-reactions-button', function(e){
 		$(this).addClass('show');
 	});
 
 	$(document).on('mouseleave', 'div.roc-reactions-button', function(e){
 		$(this).removeClass('show');
-	});
-
-	$(document).on('taphold','div.roc-reactions-button',function(e){
-		e.preventDefault();
-		$(this).addClass('show');
-		$(this).disableSelection();
 	});
 
 

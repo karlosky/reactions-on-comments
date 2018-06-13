@@ -67,11 +67,9 @@ if ( !class_exists( 'ROC_Plugin') ) {
         
             wp_enqueue_style( 'roc-style-css', plugin_dir_url( __FILE__ ) . 'assets/css/style.css', array(), ROC_VERSION );
             wp_enqueue_script( 'roc-script-js', plugin_dir_url( __FILE__ ) . 'assets/js/script.js', array( 'jquery' ), ROC_VERSION );
-            $localize = array(
-            'ajax' => admin_url( 'admin-ajax.php' ),
-        );
+
             wp_localize_script( 
-                'roc-admin-ajax', 
+                'roc-script-js', 
                 'roc_reaction', 
                 array(
                     'ajax' => admin_url( 'admin-ajax.php' ),
@@ -87,7 +85,51 @@ if ( !class_exists( 'ROC_Plugin') ) {
         * @since 0.0.1
         */
         public function ajax() {
-        
+            
+            $post_id = isset( $_POST['post'] ) ? (int)$_POST['post'] : 0;
+            $comment_id = isset( $_POST['comment'] ) ? (int)$_POST['comment'] : 0;
+            $type = isset( $_POST['type'] ) ? sanitize_title( $_POST['type'] ) : 0;
+            $vote_type = isset( $_POST['vote_type'] ) ? sanitize_title( $_POST['vote_type'] ) : 'vote';
+            $voted = isset( $_POST['voted'] ) ? sanitize_title( $_POST['voted'] ) : 0;
+            if ( $post_id ) {
+                if ( $comment_id ) {
+                    if ( $type ) {
+                        $reactions = $this->get_reactions();
+                        $slugs = array();
+                        foreach ( $reactions as $key => $icon ) {
+                            $slugs[] = sanitize_title( $key );
+                        }
+                        if ( in_array( $type, $slugs ) ) {
+                            
+                            // no errors, let's proceed
+                            if ( $this->is_enabled() && ( is_user_logged_in() || $this->is_enabled_for_anonymous() ) ) {
+                                $total = get_post_meta( $post_id, 'comment_' . $comment_id . '_roc_reaction_total', true ) ? get_post_meta( $post_id, 'comment_' . $comment_id . '_roc_reaction_total', true ) : 0;
+                                $total = (int)$total + 1;
+                                update_post_meta( $post_id, 'comment_' . $comment_id . '_roc_reaction_total', $total );
+                                
+                                wp_send_json_success( 'PROCEED!' );
+                            } else {
+                                $error = __( 'You are not allowed to add your reaction', 'roc' );
+                                wp_send_json_error( $error );
+                            }
+                            
+                        } else {
+                            $error = __( 'Selected reaction type does not exist', 'roc' );
+                            wp_send_json_error( $error );
+                        }
+                    } else {
+                        $error = __( 'Reaction type is empty', 'roc' );
+                        wp_send_json_error( $error );
+                    }
+                } else {
+                    $error = __( 'Comment ID is empty', 'roc' );
+                    wp_send_json_error( $error );
+                }
+            } else {
+                $error = __( 'Post ID is empty', 'roc' );
+                wp_send_json_error( $error );
+            }
+            
         }
         
         
@@ -103,7 +145,7 @@ if ( !class_exists( 'ROC_Plugin') ) {
             $type = $voted ? 'unvote' : 'vote';
             ob_start();
             ?>
-                <div class="roc-reactions roc-reactions-post-<?php the_ID(); ?>-comment-<?php comment_ID(); ?>" data-type="<?php echo esc_attr( $type ); ?>" data-nonce="<?php wp_create_nonce( '_roc_reaction_action' ); ?>" data-post="<?php the_ID(); ?>" data-comment="<?php comment_ID(); ?>">
+                <div class="roc-reactions roc-reactions-post-<?php the_ID(); ?>-comment-<?php comment_ID(); ?>" data-type="<?php echo esc_attr( $type ); ?>" data-nonce="<?php echo wp_create_nonce( '_roc_reaction_action' ); ?>" data-post="<?php the_ID(); ?>" data-comment="<?php comment_ID(); ?>">
                     <?php if ( $this->is_enabled() ) : ?>
                         <?php if ( is_user_logged_in() || !is_user_logged_in() && $this->is_enabled_for_anonymous() ) : ?>
                             <div class="roc-reactions-button">
@@ -188,7 +230,7 @@ if ( !class_exists( 'ROC_Plugin') ) {
         
         
         /*
-        * Check if reactions feature is enabled fot the anonymous
+        * Check if reactions feature is enabled for the anonymous
         *
         * @since 0.0.1
         */
