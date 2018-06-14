@@ -107,7 +107,17 @@ if ( !class_exists( 'ROC_Plugin') ) {
                                 $total = (int)$total + 1;
                                 update_post_meta( $post_id, 'comment_' . $comment_id . '_roc_reaction_total', $total );
                                 
-                                wp_send_json_success( 'PROCEED!' );
+                                $user_id = is_user_logged_in() ? get_current_user_id() : 0;
+                                add_post_meta( $post_id, 'comment_' . $comment_id . '_roc_reaction_' . $type, $user_id );
+                                $counter = $this->counter();
+                                wp_send_json_success( 
+                                    array(
+                                        'content' => $counter,
+                                        'type' => 'voted',
+                                        'voted' => $voted,
+                                    ) 
+                                );
+                                
                             } else {
                                 $error = __( 'You are not allowed to add your reaction', 'roc' );
                                 wp_send_json_error( $error );
