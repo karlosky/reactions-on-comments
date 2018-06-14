@@ -109,7 +109,7 @@ if ( !class_exists( 'ROC_Plugin') ) {
                                 
                                 $user_id = is_user_logged_in() ? get_current_user_id() : 0;
                                 add_post_meta( $post_id, 'comment_' . $comment_id . '_roc_reaction_' . $type, $user_id );
-                                $counter = $this->counter();
+                                $counter = $this->counter( $post_id, $comment_id );
                                 wp_send_json_success( 
                                     array(
                                         'content' => $counter,
@@ -173,7 +173,7 @@ if ( !class_exists( 'ROC_Plugin') ) {
                     <?php endif; ?>
                     <?php if ( $this->is_counter_enabled() ) : ?>
                         <div class="roc-reactions-counter">
-                            <?php echo $this->counter(); ?>
+                            <?php echo $this->counter( get_the_ID(), get_comment_ID() ); ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -190,12 +190,21 @@ if ( !class_exists( 'ROC_Plugin') ) {
         *
         * @since 0.0.1
         */
-        public function counter() {
+        public function counter( $post_id, $comment_id ) {
         
             // @todo: counter
             $reactions = $this->get_reactions();
+            $total = get_post_meta( $post_id, 'comment_' . $comment_id . '_roc_reactions_total', true );
             
-            return 'Counter';
+            $counter = '';
+            foreach ( $reactions as $reaction => $icon ) {
+                $count = get_post_meta( $post_id, 'comment_' . $comment_id . '_roc_reaction_' . sanitize_title( $reaction ) );
+                if ( count( $count ) ) {
+                    $counter .= '<span class="roc-reaction-count roc-reaction-count-' . esc_attr( sanitize_title( $reaction ) ) . '">' . wp_encode_emoji( $icon ) . ' ' . esc_attr( count( $count ) ) . '</span>  ';
+                }
+            }
+            
+            return $counter;
             
         }
         
